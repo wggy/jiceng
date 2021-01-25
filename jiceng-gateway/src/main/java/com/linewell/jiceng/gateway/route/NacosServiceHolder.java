@@ -1,12 +1,16 @@
 package com.linewell.jiceng.gateway.route;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
 /***
  *  @author wping created on 2021-01-22 16:43 
  */
+@Setter
+@Getter
 public class NacosServiceHolder {
 
     private String serviceId;
@@ -33,10 +37,6 @@ public class NacosServiceHolder {
     @Override
     public int hashCode() {
         return Objects.hash(serviceId, lastUpdatedTimestamp);
-    }
-
-    public Instance getInstance() {
-        return instance;
     }
 
 }
