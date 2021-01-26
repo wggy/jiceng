@@ -1,6 +1,6 @@
 package com.linewell.jiceng.gateway.route;
 
-import com.linewell.jiceng.gateway.JiCengConstants;
+import com.linewell.jiceng.gateway.util.JiCengConstants;
 
 import java.util.Map;
 

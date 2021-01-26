@@ -1,8 +1,5 @@
 package com.linewell.jiceng.gateway.route;
 
-import com.sun.xml.internal.ws.api.server.ServiceDefinition;
-import lombok.Data;
-import org.springframework.cloud.gateway.route.RouteDefinition;
 
 /***
  *  @author wping created on 2021-01-25 15:56 

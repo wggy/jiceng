@@ -1,7 +1,6 @@
 package com.linewell.jiceng.gateway.route;
 
 import lombok.Data;
-import org.springframework.cloud.gateway.route.RouteDefinition;
 
 import java.util.Date;
 import java.util.List;

@@ -1,5 +1,6 @@
 package com.linewell.jiceng.gateway.route;
 
+
 import org.springframework.cloud.client.ServiceInstance;
 
 /***
@@ -11,9 +12,9 @@ public interface RegistryEvent {
 
     /**
      * 新实例注册进来时触发
-     * @param ServiceInstance 实例信息
+     * @param instanceDefinition 实例信息
      */
-    void onRegistry(ServiceInstance serviceInstance);
+    void onRegistry(InstanceDefinition instanceDefinition);
 
     /**
      * 服务下线时触发

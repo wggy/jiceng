@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -15,6 +14,8 @@ import java.util.Map;
  */
 @Slf4j
 public class ServiceRouteListener extends BaseServiceListener {
+    private static final String METADATA_SOP_ROUTES_PATH = "gateway.routes.path";
+    private static final String SOP_ROUTES_PATH = "/gateway/routes";
 
     @Autowired
     private GatewayRouteCache gatewayRouteCache;
@@ -24,7 +25,9 @@ public class ServiceRouteListener extends BaseServiceListener {
 
     @Override
     public void onRemoveService(String serviceId) {
-
+        log.info("服务下线，删除路由配置，serviceId: {}", serviceId);
+        gatewayRouteCache.remove(serviceId);
+        routesProcessor.removeAllRoutes(serviceId);
     }
 
     @Override
@@ -70,4 +73,8 @@ public class ServiceRouteListener extends BaseServiceListener {
         return homeUrl + servletPath + query;
     }
 
+
+    private static String getHomeUrl(InstanceDefinition instance) {
+        return "http://" + instance.getIp() + ":" + instance.getPort();
+    }
 }

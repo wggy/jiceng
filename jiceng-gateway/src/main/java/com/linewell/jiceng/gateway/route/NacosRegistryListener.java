@@ -1,16 +1,14 @@
 package com.linewell.jiceng.gateway.route;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
-import com.alibaba.cloud.nacos.NacosServiceInstance;
 import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.api.naming.pojo.ListView;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.linewell.jiceng.gateway.JiCengConstants;
+import com.linewell.jiceng.gateway.util.JiCengConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /***
@@ -31,7 +28,6 @@ public class NacosRegistryListener extends BaseRegistryListener {
     private static final int PAGE_NO = 1;
 
     private volatile Set<NacosServiceHolder> cacheServices = Sets.newConcurrentHashSet();
-    private final Map<String, Long> updateTimeMap = Maps.newConcurrentMap();
 
     @Value("${nacos.discovery.group:${spring.cloud.nacos.discovery.group:DEFAULT_GROUP}}")
     private String nacosGroup;
@@ -42,10 +38,6 @@ public class NacosRegistryListener extends BaseRegistryListener {
     @Autowired
     private NacosDiscoveryProperties nacosDiscoveryProperties;
 
-    @Autowired(required = false)
-    private List<RegistryEvent> registryEventList;
-    @Autowired
-    private ServiceListener serviceListener;
 
 
     @Override
@@ -56,23 +48,15 @@ public class NacosRegistryListener extends BaseRegistryListener {
         // 删除缓存服务，剩下就是新增服务
         newServices.removeAll(cacheServices);
 
-        newServices.forEach(i -> {
-            Instance instance = i.getInstance();
-            InstanceDefinition instanceDefinition = new InstanceDefinition();
-            instanceDefinition.setInstanceId(instance.getInstanceId());
-            instanceDefinition.setServiceId(i.getServiceId());
-            instanceDefinition.setIp(instance.getIp());
-            instanceDefinition.setPort(instance.getPort());
-            instanceDefinition.setMetadata(instance.getMetadata());
-        });
-
-    }
+        newServices.forEach(this::toInstanceDefinition);
 
 
-    public synchronized void pullRoutes(InstanceDefinition instance) {
-        // serviceId统一小写
-        instance.setServiceId(instance.getServiceId().toLowerCase());
-        serviceListener.onAddInstance(instance);
+        // 如果有服务下线
+        Set<String> removedServiceIdList = getRemovedServiceId(serviceList);
+        // 移除
+        this.doRemove(removedServiceIdList);
+
+        cacheServices = new HashSet<>(serviceList);
     }
 
 
@@ -122,6 +106,40 @@ public class NacosRegistryListener extends BaseRegistryListener {
 
     }
 
+
+    /**
+     * 获取已经下线的serviceId
+     *
+     * @param serviceList 最新的serviceId集合
+     * @return 返回已下线的serviceId
+     */
+    private Set<String> getRemovedServiceId(List<NacosServiceHolder> serviceList) {
+        Set<String> cache = cacheServices.stream()
+                .map(NacosServiceHolder::getServiceId)
+                .collect(Collectors.toSet());
+
+        Set<String> newList = serviceList.stream()
+                .map(NacosServiceHolder::getServiceId)
+                .collect(Collectors.toSet());
+
+        cache.removeAll(newList);
+        return cache;
+    }
+
+
+    private InstanceDefinition toInstanceDefinition(NacosServiceHolder holder) {
+        Instance instance = holder.getInstance();
+        InstanceDefinition instanceDefinition = new InstanceDefinition();
+        instanceDefinition.setInstanceId(instance.getInstanceId());
+        instanceDefinition.setServiceId(holder.getServiceId());
+        instanceDefinition.setIp(instance.getIp());
+        instanceDefinition.setPort(instance.getPort());
+        instanceDefinition.setMetadata(instance.getMetadata());
+
+        pullRoutes(instanceDefinition);
+
+        return instanceDefinition;
+    }
 
 
 }
