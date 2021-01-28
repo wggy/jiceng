@@ -12,6 +12,8 @@
 
     <modules>
         <module>jiceng-gateway</module>
+        <module>jiceng-push</module>
+        <module>jiceng-map</module>
     </modules>
 
 
