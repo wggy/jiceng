@@ -27,7 +27,6 @@
         <dependency>
             <groupId>com.linewell.jiceng.core</groupId>
             <artifactId>jiceng-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>

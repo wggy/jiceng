@@ -20,7 +20,7 @@ public abstract class BaseEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "create_time")
     private Date createTime;
 
     @Column(name = "update_time")

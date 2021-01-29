@@ -7,10 +7,9 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.context.annotation.PropertySource;
 
 /**
- * Hello world!
+ * 启动入口
  */
 @SpringBootApplication(exclude = {RedisAutoConfiguration.class})
-@NacosConfigurationProperties(dataId = "example", autoRefreshed = true)
 public class JiCengMapApplication {
     public static void main(String[] args) {
         SpringApplication.run(JiCengMapApplication.class, args);
