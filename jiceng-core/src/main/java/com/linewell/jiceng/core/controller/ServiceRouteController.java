@@ -3,7 +3,6 @@ package com.linewell.jiceng.core.controller;
 import com.linewell.jiceng.core.bean.ApiMetaBuilder;
 import com.linewell.jiceng.core.bean.ServiceApiInfo;
 import com.linewell.jiceng.core.route.ServiceRouteInfo;
-import com.linewell.jiceng.core.util.OpenUtil;
 import com.linewell.jiceng.core.util.ServiceRouteInfoBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +37,10 @@ public class ServiceRouteController {
 
     @RequestMapping("/sop/routes")
     public ServiceRouteInfo listRoutes(HttpServletRequest request, HttpServletResponse response) {
-        if (!OpenUtil.validateSimpleSign(request, secret)) {
-            log.error("签名验证失败, params:{}", request.getQueryString());
-            return null;
-        }
+//        if (!OpenUtil.validateSimpleSign(request, secret)) {
+//            log.error("签名验证失败, params:{}", request.getQueryString());
+//            return null;
+//        }
         return getServiceRouteInfo(request, response);
     }
 
